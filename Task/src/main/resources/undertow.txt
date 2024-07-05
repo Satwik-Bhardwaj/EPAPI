@@ -1,0 +1,5 @@
+
+# true 值支持热加载
+undertow.devMode=false
+undertow.host=0.0.0.0
+undertow.port=8091
