@@ -1,7 +1,7 @@
 
 #918Kiss
-918kiss.host=http://api.918kiss.com:9991
-918kiss.host2=http://api.918kiss.com:9919
+918kiss.host=https://api.hoho118.xyz
+918kiss.host2=https://api.hoho118.xyz
 918kiss.currency.MYR=SXTvXkCkkhEmdjRKddAF,DM28Hhb7eDQn2788S7a6,kiss1356
 918kiss.open_currency=MYR
 

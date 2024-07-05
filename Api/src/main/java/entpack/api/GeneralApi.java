@@ -41,7 +41,7 @@ public class GeneralApi {
 
 				case "918kiss": case "918kisssgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					balance = Kiss918Api.getInstance(gameInfo.getCurrency()).getBalance(userName);
+					balance = ApolloApi.getInstance(gameInfo.getCurrency()).getBalance(userName);
 					break;
 
 				default:
@@ -141,7 +141,7 @@ public class GeneralApi {
 
 				case "918kiss": case "918kisssgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					result = Kiss918Api.getInstance(gameInfo.getCurrency())
+					result = ApolloApi.getInstance(gameInfo.getCurrency())
 							.withdraw2Balance(txnId, memberId, userName, platform, gameName);
 					break;
 
@@ -183,7 +183,7 @@ public class GeneralApi {
 			switch (api) {
 				case "918kiss": case "918kisssgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					Kiss918Api.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
+					ApolloApi.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
 					break;
 				default:
 					break;
@@ -291,7 +291,7 @@ public class GeneralApi {
 
 				case "918kiss": case "918kisssgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					Kiss918Api.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
+					ApolloApi.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
 					break;
 				default:
 					break;

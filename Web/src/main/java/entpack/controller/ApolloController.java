@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
-import entpack.api.Kiss918Api;
+import entpack.api.ApolloApi;
 import entpack.bean.MemberInfo;
 import entpack.service.Kiss918ApiService;
 import entpack.utils.DateUtil;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 
-public class Kiss918Controller extends BaseController {
+public class ApolloController extends BaseController {
 
-    private static Logger logger = LoggerFactory.getLogger("Kiss918");
+    private static Logger logger = LoggerFactory.getLogger("Apollo");
 
 	/**
 	 * 返回游戏账号
@@ -38,7 +38,7 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        Kiss918Api api = Kiss918Api.getInstance(currency);
+        ApolloApi api = ApolloApi.getInstance(currency);
 
         String result = api.getLoginUrl(memberId, gameId, "en");
         System.out.println(result);
@@ -56,18 +56,19 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        renderJson(Kiss918Api.getInstance(currency).randomUserName());
+        renderJson(ApolloApi.getInstance(currency).randomUserName());
     }
 
     /**
      * 添加用户接口
      */
-    public void addUser(String currency, String acccount, String userName, String pwd) {
+
+    // create player
+    public void createPlayer(String currency, String uid, String creditAllocated) {
         if (currency == null) {
             currency = "MYR";
         }
-
-        renderJson(Kiss918Api.getInstance(currency).addUser(acccount, userName, pwd));
+        renderJson(ApolloApi.getInstance(currency).createPlayer(uid, creditAllocated));
     }
 
     /**
@@ -78,7 +79,7 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        renderJson(Kiss918Api.getInstance(currency).editUser(userName, oldPassWd, passWd));
+        renderJson(ApolloApi.getInstance(currency).editUser(userName, oldPassWd, passWd));
     }
 
     /**
@@ -93,7 +94,7 @@ public class Kiss918Controller extends BaseController {
             type = 0;
         }
 
-        renderJson(Kiss918Api.getInstance(currency).setScore(userName, txCode, type, scoreNum));
+        renderJson(ApolloApi.getInstance(currency).setScore(userName, txCode, type, scoreNum));
     }
 
     /**
@@ -103,7 +104,7 @@ public class Kiss918Controller extends BaseController {
         if (currency == null) {
             currency = "MYR";
         }
-        renderJson(Kiss918Api.getInstance(currency).getGameBalance(userName));
+        renderJson(ApolloApi.getInstance(currency).getGameBalance(userName));
     }
 
     /**
@@ -120,7 +121,7 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        renderJson(Kiss918Api.getInstance(currency).gameLog(pageIndex, 100, userName, sDate, eDate));
+        renderJson(ApolloApi.getInstance(currency).gameLog(pageIndex, 100, userName, sDate, eDate));
     }
 
     /**
@@ -136,7 +137,7 @@ public class Kiss918Controller extends BaseController {
 
         String txnId = StringUtil.shortUUID();
         MemberInfo memberInfo = Kiss918ApiService.getMemberInfo(memberId);
-        Ret result = Kiss918Api.getInstance(currency).withdraw2Balance(txnId, memberId, memberInfo.getUserName());
+        Ret result = ApolloApi.getInstance(currency).withdraw2Balance(txnId, memberId, memberInfo.getUserName());
         renderText("result:" + result.toJson());
     }
 
@@ -157,7 +158,7 @@ public class Kiss918Controller extends BaseController {
         Date startDate = DateUtil.parse(sDate, "yyyy-MM-dd");
         Date endDate = DateUtil.parse(eDate, "yyyy-MM-dd");
 
-        JSONObject result = Kiss918Api.getInstance(currency).agentTotalReport(userName, startDate, endDate, type);
+        JSONObject result = ApolloApi.getInstance(currency).agentTotalReport(userName, startDate, endDate, type);
         renderText("result:" + result.toJSONString());
     }
 
@@ -175,7 +176,7 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        JSONObject result = Kiss918Api.getInstance(currency).accountList(action, userName, pageIndex);
+        JSONObject result = ApolloApi.getInstance(currency).accountList(action, userName, pageIndex);
         renderText("result:" + result.toJSONString());
     }
 
@@ -184,7 +185,7 @@ public class Kiss918Controller extends BaseController {
             currency = "MYR";
         }
 
-        JSONObject result = Kiss918Api.getInstance(currency).disable(userName);
+        JSONObject result = ApolloApi.getInstance(currency).disable(userName);
         renderText("result:" + result.toJSONString());
     }
 
@@ -199,11 +200,11 @@ public class Kiss918Controller extends BaseController {
 
         Date sDate = DateUtil.parse(date, "yyyy-MM-dd");
 
-        Kiss918Api.getInstance(currency).queryMemberReport(sDate);
+        ApolloApi.getInstance(currency).queryMemberReport(sDate);
         renderText("result:ok");
     }
     public void apiMap() {
-        renderText(JSON.toJSONString(Kiss918Api.getApiMap()));
+        renderText(JSON.toJSONString(ApolloApi.getApiMap()));
     }
 
 }

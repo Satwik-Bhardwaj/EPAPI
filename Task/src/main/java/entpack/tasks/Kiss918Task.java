@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.redis.Redis;
-import entpack.api.Kiss918Api;
+import entpack.api.ApolloApi;
 import entpack.bean.MemberGameConfig;
 import entpack.bean.RedisTicket;
 import entpack.service.BaseService;
@@ -38,7 +38,7 @@ public class Kiss918Task implements StatefulJob {
 
         try {
             Date now = new Date();
-            for (Kiss918Api value : Kiss918Api.getApiMap().values()) {
+            for (ApolloApi value : ApolloApi.getApiMap().values()) {
 
                 value.queryMemberReport(now);
             }
