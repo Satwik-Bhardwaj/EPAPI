@@ -1,7 +1,7 @@
 
 #Apollo
-apollo.host=https://api.hoho118.xyz:9991
-apollo.host2=https://api.hoho118.xyz:9919
+apollo.host=https://api.hoho118.xyz
+apollo.host2=https://api.hoho118.xyz
 apollo.currency.MYR=Abc077,A77,fg0guuniwx3jaba1,fdz0xszsi361dp61
 apollo.currency.IDR=Abc078,A78,eg0guuniwx3jaba4,edz0xszsi361dp62
 apollo.currency.THB=Abc080,A80,gg0guuniwx3jaba6,gdz0xszsi361dp66

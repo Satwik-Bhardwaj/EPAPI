@@ -133,7 +133,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public boolean createPlayer(String uid, String creditAllocated) {
 
         String time = String.valueOf(System.currentTimeMillis());
-        Map<String, String> params = new HashMap<>();
+        JSONObject params = new JSONObject();
         params.put("action", "2");
         params.put("ts", time);
         params.put("parent", getApiAgent());
@@ -161,8 +161,8 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             JSONObject obj = postData(url, paramList);
 
             if (obj != null) {
-                String code = obj.getString("code");
-                if (code != null && (code.equals("0") || code.equals("-1"))) {
+                String resp_status = obj.getString("status");
+                if(resp_status != null && resp_status.equals("0000")) {
                     // 记录创建的账号
                     //create entry in database
                     Record record = new Record()
