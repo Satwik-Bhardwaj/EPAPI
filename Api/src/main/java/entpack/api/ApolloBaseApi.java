@@ -178,7 +178,44 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     }
 
+   public Object searchPlayer(String playerId) {
+       String time = String.valueOf(System.currentTimeMillis());
+       JSONObject params = new JSONObject();
+       params.put("action", "3");
+       params.put("ts", time);
+       params.put("parent", getApiAgent());
+       params.put("uid", playerId);
 
+       String data = null;
+       try {
+           data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+
+       Map<String, String> paramList = new HashMap<>();
+       paramList.put("dc", dc);
+       paramList.put("x", data);
+
+       String url = HOST + "/Tr_UserInfo.aspx";
+       try {
+           JSONObject obj = postData(url, paramList);
+
+           if (obj != null) {
+               String resp_status = obj.getString("status");
+               if(resp_status != null && resp_status.equals("0000")) {
+                   return obj.get("data");
+               } else {
+                   logger.error("searchPlayer postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
+               }
+           }
+       } catch (Exception e) {
+           logger.error("searchPlayer.error", e);
+           e.printStackTrace();
+       }
+
+       return null;
+   }
     /**
      * 修改用户信息
      *
