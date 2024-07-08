@@ -164,6 +164,18 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 String code = obj.getString("code");
                 if (code != null && (code.equals("0") || code.equals("-1"))) {
                     // 记录创建的账号
+                    //create entry in database
+                    Record record = new Record()
+                            .set("api", getApi())
+                            .set("account", obj.get("uid"))
+                            .set("memberId", obj.get("uid"))
+                            .set("createDate", new Date())
+                            .set("currency",getCurrency())
+                            .set("username",obj.get("uid"))
+                            .set("agentId",getApiAgent());
+
+                    Db.use("member").save("apollo_create",record);
+
                     return true;
                 } else {
                     logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
