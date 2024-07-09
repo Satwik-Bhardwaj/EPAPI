@@ -19,7 +19,6 @@ import com.jfinal.plugin.redis.Redis;
 import com.jfinal.server.undertow.UndertowServer;
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
-import entpack.handler.GlobalExceptionHandler;
 import entpack.interceptor.SessionHandler;
 import entpack.plugin.RedisPlugin;
 import entpack.serializer.MyFstSerializer;
@@ -246,6 +245,5 @@ public class WebConfig extends JFinalConfig {
 	public void configHandler(Handlers me) {
 		me.add(new SessionHandler());
 		me.add(new DruidStatViewHandler(PropKit.get("druid.visitPath")));
-		me.add(new GlobalExceptionHandler());
 	}
 }

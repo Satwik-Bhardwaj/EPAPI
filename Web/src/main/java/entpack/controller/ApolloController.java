@@ -198,7 +198,7 @@ public class ApolloController extends BaseController {
 
     public void disable(String currency, String userName) {
         if (currency == null) {
-            currency = "MYR";>>>>>>> develop
+            currency = "MYR";
         }
 
         JSONObject result = ApolloApi.getInstance(currency).disable(userName);
