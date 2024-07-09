@@ -21,13 +21,13 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class Kiss918BaseApi implements MultipleInterface {
+public abstract class ApolloBaseApi implements MultipleInterface {
 
-    protected static String def_Api = "918kiss";
+    protected static String def_Api = "apollo";
     private static final Logger logger = LoggerFactory.getLogger(def_Api);
 
     private static final Logger logger_json = LoggerFactory.getLogger(def_Api + "_json");
-    protected String authCode;
+    protected String iv;
 
     protected String secretKey;
 
@@ -35,14 +35,16 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
 
     protected String api_agent;
 
+    protected String dc;
+
     private static final String HOST = Constant.GameConfig.get(def_Api + ".host");
 
     private static final String HOST2 = Constant.GameConfig.get(def_Api + ".host2");
 
 
     public String sign(String data, String time) {
-        logger.info("authCode:{} data:{} time:{} secretKey:{}", authCode.toLowerCase(), data.toLowerCase(), time.toLowerCase(), secretKey.toLowerCase());
-        return MD5Util.md5((authCode + data + time + secretKey).toLowerCase()).toUpperCase();
+        logger.info("authCode:{} data:{} time:{} secretKey:{}", iv.toLowerCase(), data.toLowerCase(), time.toLowerCase(), secretKey.toLowerCase());
+        return MD5Util.md5((iv + data + time + secretKey).toLowerCase()).toUpperCase();
     }
 
 
@@ -53,7 +55,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
 
     public abstract String getCurrency();
 
-    public abstract String getAuthCode();
+    public abstract String getIv();
 
     public abstract String getSecretKey();
 
@@ -98,7 +100,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         params.put("userName", getApiAgent());
         params.put("UserAreaId", "1");
         params.put("time", time);
-        params.put("authcode", authCode);
+        params.put("authcode", iv);
         params.put("sign", sign(getApiAgent(), time));
 
         String url = HOST + "/ashx/account/account.ashx";
@@ -124,42 +126,49 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
 
     /**
      * 添加用户接口
-     *
-     * @param account
-     * @param userName
-     * @param pwdText  密码
+     * @param uid user id
+     * @param creditAllocated player's name
      * @return
      */
-    public boolean addUser(String account, String userName, String pwdText) {
+    public boolean createPlayer(String uid, String creditAllocated) {
 
         String time = String.valueOf(System.currentTimeMillis());
-        Map<String, String> params = new HashMap<>();
-        params.put("action", "addUser");
-        params.put("agent", getApiAgent());
-        params.put("PassWd", pwdText);
-        params.put("pwdtype", "1");
-        params.put("userName", account);
-        params.put("Name", userName);
-        params.put("Tel", "000000");
-        params.put("Memo", "");
-        params.put("UserType", "1");
-        params.put("time", time);
-        params.put("authcode", authCode);
-        params.put("sign", sign(account, time));
+        JSONObject params = new JSONObject();
+        params.put("action", "2");
+        params.put("ts", time);
+        params.put("parent", getApiAgent());
+        params.put("uid", uid);
+        params.put("name", uid);
+        params.put("credit_allocated", creditAllocated == null || creditAllocated.isEmpty() ? "0" : creditAllocated);
 
-        String url = HOST + "/ashx/account/account.ashx";
+
+        //encryption
+        // TODO : add encryption operations here
+        String data = null;
         try {
-            JSONObject obj = postData(url, params);
+            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // build request
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("dc", dc);
+        paramList.put("x", data);
+
+        String url = HOST + "/Tr_CreateUser.aspx";
+        try {
+            JSONObject obj = postData(url, paramList);
 
             if (obj != null) {
-                String code = obj.getString("code");
-                if (code != null && (code.equals("0") || code.equals("-1"))) {
+                String resp_status = obj.getString("status");
+                if(resp_status != null && resp_status.equals("0000")) {
                     // 记录创建的账号
                     return true;
                 } else {
                     logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
                 }
-                return false;
+                return false;   
             }
         } catch (Exception e) {
             logger.error("addUser.error", e);
@@ -169,7 +178,28 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
 
     }
 
+   public JSONObject searchPlayer(String playerId) {
+       String time = String.valueOf(System.currentTimeMillis());
+       JSONObject params = new JSONObject();
+       params.put("action", "3");
+       params.put("ts", time);
+       params.put("parent", getApiAgent());
+       params.put("uid", playerId);
 
+       String data = null;
+       try {
+           data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+
+       Map<String, String> paramList = new HashMap<>();
+       paramList.put("dc", dc);
+       paramList.put("x", data);
+
+       String url = HOST + "/Tr_UserInfo.aspx";
+       return postData(url, paramList);
+   }
     /**
      * 修改用户信息
      *
@@ -186,7 +216,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         params.put("PassWd", passWd);
         params.put("pwdtype", "1");
         params.put("time", time);
-        params.put("authcode", authCode);
+        params.put("authcode", iv);
         params.put("sign", sign(userName, time));
 
         String url = HOST + "/ashx/account/account.ashx";
@@ -230,7 +260,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("action", "getUserInfo");
         map.put("userName", account);
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(account, time));
 
         String addUserUrl = HOST + "/ashx/account/account.ashx";
@@ -254,7 +284,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("userName", userName);
         map.put("pageIndex", String.valueOf(pageIndex));
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(userName, time));
 
         String addUserUrl = HOST2 + "/ashx/getData/AccountList.ashx";
@@ -279,7 +309,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("sDate", sdf.format(sDate));
         map.put("eDate", sdf.format(eDate));
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(userName, time));
 
         String addUserUrl = HOST2 + "/ashx/AccountReport.ashx";
@@ -304,7 +334,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("sDate", sdf.format(sDate));
         map.put("eDate", sdf.format(eDate));
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(userName, time));
 
         String addUserUrl = HOST2 + "/ashx/AgentMoneyLog.ashx";
@@ -331,7 +361,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("eDate", sdf.format(eDate));
         map.put("Type", type);
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(userName, time));
 
         String addUserUrl = HOST2 + "/ashx/AgentTotalReport.ashx";
@@ -478,7 +508,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("sDate", DateUtil.formatDate(sDate, "yyyy-MM-dd"));
         map.put("eDate", DateUtil.formatDate(eDate, "yyyy-MM-dd"));
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(userName, time));
 
         String addUserUrl = HOST2 + "/ashx/UserscoreLog.ashx";
@@ -506,7 +536,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         params.put("sDate", DateUtil.formatDate(sDate));
         params.put("eDate", DateUtil.formatDate(eDate));
         params.put("time", time + "");
-        params.put("authcode", authCode);
+        params.put("authcode", iv);
         params.put("sign", sign(account, time));
 
         try {
@@ -547,7 +577,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         map.put("userName", account);
 
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(account, time));
 
         String addUserUrl = HOST + "/ashx/account/account.ashx";
@@ -567,7 +597,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         Map<String, String> map = new HashMap<>();
         map.put("orderid", orderId);
         map.put("time", time);
-        map.put("authcode", authCode);
+        map.put("authcode", iv);
         map.put("sign", sign(orderId, time));
 
         String addUserUrl = HOST2 + "/ashx/getOrder.ashx";
@@ -594,10 +624,12 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         if (!Kiss918ApiService.exists(memberId)) {
 
 //            String account = memberInfo.getUserName();
+            // TODO : see this
+            String uid = " ";
             String pwd = memberInfo.getPwdText();
             String account = randomUserName();
-            String userName = memberInfo.getUserName();
-            boolean result = addUser(account, userName, pwd);
+            String name = memberInfo.getUserName();
+            boolean result = createPlayer(uid, name);
             logger.info("Kiss918.createMember result:{}", result);
 
             if (!result) {
@@ -610,7 +642,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
             model.set("memberId", memberId);
             model.set("currency", getCurrency());
             model.set("account", account);
-            model.set("userName", userName);
+            model.set("userName", name);
             model.set("pwd", pwd);
             model.set("createDate", new Date());
             Kiss918ApiService.createUser(model);
@@ -709,7 +741,7 @@ public abstract class Kiss918BaseApi implements MultipleInterface {
         params.put("ActionIp", "0.0.0.0");
 
         params.put("time", time);
-        params.put("authcode", authCode);
+        params.put("authcode", iv);
         params.put("sign", sign(account, time));
 
         try {

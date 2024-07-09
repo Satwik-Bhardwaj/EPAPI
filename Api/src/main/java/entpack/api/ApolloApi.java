@@ -5,41 +5,44 @@ import entpack.Constant;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Kiss918Api extends Kiss918BaseApi {
+public class ApolloApi extends ApolloBaseApi {
 
-    private static Map<String, Kiss918Api> apiMap = new HashMap<>();
+    private static Map<String, ApolloApi> apiMap = new HashMap<>();
 
     private final static Map<String, String> agentIdMap = new HashMap<>();
 
     static {
-        String def_Api = "kiss918";
-        String open_currency = Constant.GameConfig.getEnv(def_Api + "_open_currency");
+        String def_Api = "apollo";
+        String open_currency = Constant.GameConfig.get(def_Api + ".open_currency");
         //初始化api
         for (String currency : open_currency.split(",")) {
-            String currency_config = Constant.GameConfig.getEnv(def_Api + "_currency_" + currency);
+            String currency_config = Constant.GameConfig.get(def_Api + ".currency." + currency);
             for (String config : currency_config.split("\\|")) {
                 String[] configs = config.split(",");
 
-                String authCode = configs[0];
-                String secretKey = configs[1];
-                String agent = configs[2];
-                apiMap.put(currency, new Kiss918Api(currency, authCode, secretKey, agent));
+                String agentId = configs[0];
+                String dc = configs[1];
+                String secretKey = configs[2];
+                String iv = configs[3];
+                apiMap.put(currency, new ApolloApi(currency, iv, secretKey, agentId, dc));
 
                 if (currency.equals("HKD")) {
-                    apiMap.put("HK", new Kiss918Api(currency, authCode, secretKey, agent));
+                    apiMap.put("HK", new ApolloApi(currency, iv, secretKey, agentId, dc));
                 }
-                agentIdMap.put(agent, authCode);
+                // TODO : please check iv is placed correctly
+                agentIdMap.put(agentId, iv);
             }
         }
     }
 
-    public Kiss918Api(String currency, String authCode, String secretKey, String agent) {
+    public ApolloApi(String currency, String iv, String secretKey, String agentId, String dc) {
         this.currency = currency;
-        this.api_agent = agent;
-        this.authCode = authCode;
+        this.api_agent = agentId;
+        this.iv = iv;
         this.secretKey = secretKey;
+        this.dc = dc;
     }
-    public static Kiss918Api getInstance(String currency) {
+    public static ApolloApi getInstance(String currency) {
         return apiMap.get(currency);
     }
 
@@ -66,8 +69,8 @@ public class Kiss918Api extends Kiss918BaseApi {
     }
 
     @Override
-    public String getAuthCode() {
-        return authCode;
+    public String getIv() {
+        return iv;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class Kiss918Api extends Kiss918BaseApi {
         return api_agent;
     }
 
-    public static Map<String, Kiss918Api> getApiMap() {
+    public static Map<String, ApolloApi> getApiMap() {
         return apiMap;
     }
 }

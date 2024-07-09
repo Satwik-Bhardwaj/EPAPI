@@ -132,7 +132,7 @@ public class LaunchController extends BaseController {
 
 			case "918kiss": case "918kisssgd":
 				gameInfo = BaseService.getGameInfo(gameId);
-				url = Kiss918Api.getInstance(gameInfo.getCurrency()).getLoginUrl(memberId, gameId, lang);
+				url = ApolloApi.getInstance(gameInfo.getCurrency()).getLoginUrl(memberId, gameId, lang);
 				break;
 
 			default:
