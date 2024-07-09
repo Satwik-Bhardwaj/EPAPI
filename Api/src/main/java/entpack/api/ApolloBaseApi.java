@@ -174,7 +174,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                             .set("username",obj.get("uid"))
                             .set("agentId",getApiAgent());
 
-                    Db.use("member").save("apollo_create",record);
+                        Db.use("member").save("apollo_create",record);
 
                     return true;
                 } else {
