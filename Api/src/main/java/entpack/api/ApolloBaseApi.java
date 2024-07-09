@@ -190,7 +190,30 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     }
 
-
+    public JSONObject obtainToken(String uid,String lang,String gType,String mute,String currency){
+        String time = String.valueOf(System.currentTimeMillis());
+        JSONObject params = new JSONObject();
+        params.put("action", "1");
+        params.put("ts", time);
+        params.put("parent", getApiAgent());
+        params.put("uid", uid);
+        params.put("name", uid);
+        params.put("gType",gType);
+        params.put("windowMode","2");
+        params.put("backBtn","false");
+        params.put("mute",mute);
+        String data = null;
+        try {
+            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("dc", dc);
+        paramList.put("x", data);
+        String url = HOST + "/Tr_GetToken.aspx";
+        return postData(url, paramList);
+    }
     /**
      * 修改用户信息
      *

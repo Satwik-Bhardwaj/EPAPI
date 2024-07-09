@@ -71,6 +71,14 @@ public class ApolloController extends BaseController {
         renderJson(ApolloApi.getInstance(currency).createPlayer(uid, creditAllocated));
     }
 
+    //obtain token
+    public void obtainToken(String uid,String lang,String gType,String mute,String currency){
+        if(currency==null){
+            currency="MYR";
+        }
+        renderJson(ApolloApi.getInstance(currency).obtainToken(uid,lang,gType,mute,currency));
+    }
+
     /**
      * 修改用户信息
      */
