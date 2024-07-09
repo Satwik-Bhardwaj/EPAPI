@@ -164,6 +164,18 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 String resp_status = obj.getString("status");
                 if(resp_status != null && resp_status.equals("0000")) {
                     // 记录创建的账号
+                    //create entry in database
+                    Record record = new Record()
+                            .set("api", getApi())
+                            .set("account", obj.get("uid"))
+                            .set("memberId", obj.get("uid"))
+                            .set("createDate", new Date())
+                            .set("currency",getCurrency())
+                            .set("username",obj.get("uid"))
+                            .set("agentId",getApiAgent());
+
+                        Db.use("member").save("apollo_create",record);
+
                     return true;
                 } else {
                     logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
@@ -178,6 +190,31 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     }
 
+    public JSONObject obtainToken(String uid,String lang,String gType,String mute,String currency){
+        String time = String.valueOf(System.currentTimeMillis());
+        JSONObject params = new JSONObject();
+        params.put("action", "1");
+        params.put("ts", time);
+        params.put("parent", getApiAgent());
+        params.put("uid", uid);
+        params.put("name", uid);
+        params.put("gType",gType);
+        params.put("windowMode","2");
+        params.put("backBtn","false");
+        params.put("mute",mute);
+        String data = null;
+        try {
+            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("dc", dc);
+        paramList.put("x", data);
+        String url = HOST + "/Tr_GetToken.aspx";
+        return postData(url, paramList);
+    }
+  
    public JSONObject searchPlayer(String playerId) {
        String time = String.valueOf(System.currentTimeMillis());
        JSONObject params = new JSONObject();
@@ -200,6 +237,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
        String url = HOST + "/Tr_UserInfo.aspx";
        return postData(url, paramList);
    }
+  
     /**
      * 修改用户信息
      *

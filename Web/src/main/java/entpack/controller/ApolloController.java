@@ -71,6 +71,14 @@ public class ApolloController extends BaseController {
         renderJson(ApolloApi.getInstance(currency).createPlayer(uid, creditAllocated));
     }
 
+    //obtain token
+    public void obtainToken(String uid,String lang,String gType,String mute,String currency){
+        if(currency==null){
+            currency="MYR";
+        }
+        renderJson(ApolloApi.getInstance(currency).obtainToken(uid,lang,gType,mute,currency));
+    }
+
     public void searchPlayer(String currency, String playerId) {
         if (currency == null) {
             currency = "MYR";
@@ -78,6 +86,7 @@ public class ApolloController extends BaseController {
         renderJson(ApolloApi.getInstance(currency).searchPlayer(playerId));
 
     }
+
     /**
      * 修改用户信息
      */
@@ -189,7 +198,7 @@ public class ApolloController extends BaseController {
 
     public void disable(String currency, String userName) {
         if (currency == null) {
-            currency = "MYR";
+            currency = "MYR";>>>>>>> develop
         }
 
         JSONObject result = ApolloApi.getInstance(currency).disable(userName);
