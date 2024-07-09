@@ -178,7 +178,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     }
 
-   public Object searchPlayer(String playerId) {
+   public JSONObject searchPlayer(String playerId) {
        String time = String.valueOf(System.currentTimeMillis());
        JSONObject params = new JSONObject();
        params.put("action", "3");
@@ -198,23 +198,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
        paramList.put("x", data);
 
        String url = HOST + "/Tr_UserInfo.aspx";
-       try {
-           JSONObject obj = postData(url, paramList);
-
-           if (obj != null) {
-               String resp_status = obj.getString("status");
-               if(resp_status != null && resp_status.equals("0000")) {
-                   return obj.get("data");
-               } else {
-                   logger.error("searchPlayer postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
-               }
-           }
-       } catch (Exception e) {
-           logger.error("searchPlayer.error", e);
-           e.printStackTrace();
-       }
-
-       return null;
+       return postData(url, paramList);
    }
     /**
      * 修改用户信息
