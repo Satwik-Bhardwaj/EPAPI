@@ -2,11 +2,11 @@
 #Apollo
 apollo.host=https://api.hoho118.xyz
 apollo.host2=https://api.hoho118.xyz
-apollo.currency.MYR=Abc077,A77,fg0guuniwx3jaba1,fdz0xszsi361dp61
-apollo.currency.IDR=Abc078,A78,eg0guuniwx3jaba4,edz0xszsi361dp62
-apollo.currency.THB=Abc080,A80,gg0guuniwx3jaba6,gdz0xszsi361dp66
+apollo.currency.SGD=Abc083,A83,ag0guuniwx3jab11,adz0xszsi361dp12
 apollo.currency.VND=Abc081,A81,cg0guuniwx3jaba7,cdz0xszsi361dp67
 apollo.currency.MMK=Abc079,A79,dg0guuniwx3jaba5,ddz0xszsi361dp65
+apollo.currency.THB=Abc080,A80,gg0guuniwx3jaba6,gdz0xszsi361dp66
+apollo.currency.IDR=Abc078,A78,eg0guuniwx3jaba4,edz0xszsi361dp62
+apollo.currency.MYR=Abc077,A77,fg0guuniwx3jaba1,fdz0xszsi361dp61
 apollo.currency.PHP=Abc082,A82,bg0guuniwx3jaba9,bdz0xszsi361dp69
-apollo.currency.PHP=Abc083,A83,ag0guuniwx3jab11,adz0xszsi361dp12
-apollo.open_currency=MYR
+apollo.open_currency=SGD,VND,MMK,THB,IDR,MYR,PHP

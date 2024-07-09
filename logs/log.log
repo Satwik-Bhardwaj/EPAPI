@@ -2143,3 +2143,15 @@ Caused by: java.sql.SQLSyntaxErrorException: Table 'entpack.api_apollo_create' d
 
 2024-07-08 18:06:58
 [WARN]-[Thread: XNIO-1 task-1]-[com.alibaba.druid.pool.DruidAbstractDataSource.testConnectionInternal()]: discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/entpack?serverTimezone=GMT%2B7&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true, version : 1.2.8, lastPacketReceivedIdleMillis : 595225
+
+2024-07-09 12:04:45
+[ERROR]-[Thread: XNIO-1 task-1]-[entpack.api.ApolloBaseApi.createPlayer()]: addUser postUrl:https://api.hoho118.xyz/Tr_CreateUser.aspx params:{"parent":"Abc077","uid":"123456777","credit_allocated":"2000","name":"123456777","action":"2","ts":"1720506879854"} result:{"uid":"","err_text":"failed","status":"9999"}
+
+2024-07-09 12:04:49
+[ERROR]-[Thread: XNIO-1 task-1]-[entpack.api.ApolloBaseApi.createPlayer()]: addUser postUrl:https://api.hoho118.xyz/Tr_CreateUser.aspx params:{"parent":"Abc077","uid":"123456777","credit_allocated":"0","name":"123456777","action":"2","ts":"1720506889170"} result:{"uid":"","err_text":"failed","status":"9999"}
+
+2024-07-09 12:05:04
+[WARN]-[Thread: XNIO-1 task-1]-[com.alibaba.druid.pool.DruidAbstractDataSource.testConnectionInternal()]: discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/entpack?serverTimezone=GMT%2B7&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true, version : 1.2.8, lastPacketReceivedIdleMillis : 128086
+
+2024-07-09 12:07:34
+[ERROR]-[Thread: XNIO-1 task-1]-[entpack.api.ApolloBaseApi.createPlayer()]: addUser postUrl:https://api.hoho118.xyz/Tr_CreateUser.aspx params:{"parent":"Abc082","uid":"123456777","credit_allocated":"2000","name":"123456777","action":"2","ts":"1720507048881"} result:{"uid":"","err_text":"failed","status":"9999"}
