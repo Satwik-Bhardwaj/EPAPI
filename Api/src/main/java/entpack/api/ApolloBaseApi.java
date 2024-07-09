@@ -214,6 +214,30 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         String url = HOST + "/Tr_GetToken.aspx";
         return postData(url, paramList);
     }
+  
+   public JSONObject searchPlayer(String playerId) {
+       String time = String.valueOf(System.currentTimeMillis());
+       JSONObject params = new JSONObject();
+       params.put("action", "3");
+       params.put("ts", time);
+       params.put("parent", getApiAgent());
+       params.put("uid", playerId);
+
+       String data = null;
+       try {
+           data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+
+       Map<String, String> paramList = new HashMap<>();
+       paramList.put("dc", dc);
+       paramList.put("x", data);
+
+       String url = HOST + "/Tr_UserInfo.aspx";
+       return postData(url, paramList);
+   }
+  
     /**
      * 修改用户信息
      *
