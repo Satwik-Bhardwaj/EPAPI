@@ -237,6 +237,39 @@ public abstract class ApolloBaseApi implements MultipleInterface {
        String url = HOST + "/Tr_UserInfo.aspx";
        return postData(url, paramList);
    }
+
+    public JSONObject withdrawOrDeposit(double amount, String playerId, String remark,
+                                        String allCashOutFlag) {
+        String time = String.valueOf(System.currentTimeMillis());
+        if (amount > 0) {
+            remark = remark + "Deposit";
+        } else {
+            remark = remark + "Withdrawal";
+        }
+        JSONObject params = new JSONObject();
+        params.put("action", "5");
+        params.put("ts", time);
+        params.put("parent", getApiAgent());
+        params.put("uid", playerId);
+        params.put("serialNo", StringUtil.shortUUID());
+        params.put("allCashOutFlag", allCashOutFlag);
+        params.put("amount", amount);
+        params.put("remark", remark);
+
+        String data = null;
+        try {
+            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("dc", dc);
+        paramList.put("x", data);
+
+        String url = HOST + "/Tr_ChangeV.aspx";
+        return postData(url, paramList);
+    }
   
     /**
      * 修改用户信息
