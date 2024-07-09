@@ -87,6 +87,13 @@ public class ApolloController extends BaseController {
 
     }
 
+    public void searchGame(String currency, String uid, String startTime, String endTime, String lang, String gType) {
+        if(currency == null) {
+            currency = "MYR";
+        }
+        renderJson(ApolloApi.getInstance(currency).searchGame(uid, startTime, endTime, lang, gType));
+    }
+
     /**
      * 修改用户信息
      */
