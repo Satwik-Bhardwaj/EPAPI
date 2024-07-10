@@ -143,7 +143,6 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
 
         //encryption
-        // TODO : add encryption operations here
         String data = null;
         try {
             data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
@@ -726,7 +725,6 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         if (!ApolloApiService.exists(memberId)) {
 
 //            String account = memberInfo.getUserName();
-            // TODO : see this
             String uid = " ";
             String pwd = memberInfo.getPwdText();
             String account = randomUserName();
