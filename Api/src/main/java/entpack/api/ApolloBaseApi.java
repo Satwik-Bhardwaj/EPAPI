@@ -270,7 +270,39 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         String url = HOST + "/Tr_ChangeV.aspx";
         return postData(url, paramList);
     }
-  
+
+
+    public JSONObject searchGame(String uid, String startTime, String endTime, String lang, String gType) {
+
+        String time = String.valueOf(System.currentTimeMillis());
+        JSONObject params = new JSONObject();
+        params.put("action", "12");
+        params.put("ts", time);
+        params.put("parent", getApiAgent());
+        params.put("uid", uid);
+        params.put("starttime", startTime);
+        params.put("endtime", endTime);
+        params.put("lang", lang);
+        params.put("gType", gType);
+
+        //encryption
+        String data = null;
+        try {
+            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // build request
+        Map<String, String> paramList = new HashMap<>();
+        paramList.put("dc", dc);
+        paramList.put("x", data);
+
+        String url = HOST + "/Tr_QueryGameJsonResult.aspx";
+        return postData(url, paramList);
+
+    }
+
     /**
      * 修改用户信息
      *
@@ -678,7 +710,6 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public double getBalance(String userName) {
         return getGameBalance(userName);
     }
-
     public String getLoginUrl(String memberId, String gameId, String lang) {
         logger.info("apollo.getLoginUrl memberId:{} gameId:{} lang:{}", memberId, gameId, lang);
 
@@ -753,6 +784,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         //跳转到过渡页
         return "/launchApp?api=apollo";
     }
+
     /*多钱包接口实现*/
 
     /**

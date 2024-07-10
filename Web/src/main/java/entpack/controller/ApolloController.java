@@ -63,7 +63,13 @@ public class ApolloController extends BaseController {
      * 添加用户接口
      */
 
-    // create player
+    /**
+     * Create player Endpoint
+     *
+     * @param currency currency type
+     * @param uid user id
+     * @param creditAllocated initial balance
+     */
     public void createPlayer(String currency, String uid, String creditAllocated) {
         if (currency == null) {
             currency = "MYR";
@@ -71,7 +77,15 @@ public class ApolloController extends BaseController {
         renderJson(ApolloApi.getInstance(currency).createPlayer(uid, creditAllocated));
     }
 
-    //obtain token
+    /**
+     * Obtain Token Endpoint
+     *
+     * @param currency currency type
+     * @param uid user id
+     * @param lang language
+     * @param gType game type
+     * @param mute mute
+     */
     public void obtainToken(String uid,String lang,String gType,String mute,String currency){
         if(currency==null){
             currency="MYR";
@@ -79,7 +93,12 @@ public class ApolloController extends BaseController {
         renderJson(ApolloApi.getInstance(currency).obtainToken(uid,lang,gType,mute,currency));
     }
 
-    //search player information
+    /**
+     * Search Player
+     *
+     * @param currency currency type
+     * @param playerId player id
+     */
     public void searchPlayer(String currency, String playerId) {
         if (currency == null) {
             currency = "MYR";
@@ -99,6 +118,23 @@ public class ApolloController extends BaseController {
         }
         renderJson(ApolloApi.getInstance(currency).withdrawOrDeposit(amount, playerId, remark, allCashOutFlag));
     }
+    /**
+     * Search game details
+     *
+     * @param currency currency type
+     * @param uid user id
+     * @param startTime start time (time range)
+     * @param endTime end time (time range)
+     * @param lang language
+     * @param gType game type
+     */
+    public void searchGame(String currency, String uid, String startTime, String endTime, String lang, String gType) {
+        if(currency == null) {
+            currency = "MYR";
+        }
+        renderJson(ApolloApi.getInstance(currency).searchGame(uid, startTime, endTime, lang, gType));
+    }
+
     /**
      * 修改用户信息
      */
