@@ -13,7 +13,7 @@ public class RouteConfig extends Routes {
 		add("/", IndexController.class, "index");
 
 
-			add("/918kiss", ApolloController.class);
+			add("/apollo", ApolloController.class);
 
 
 		System.out.println("RouteConfig");
