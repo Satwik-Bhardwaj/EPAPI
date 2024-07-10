@@ -13,7 +13,7 @@
     <modules>
         <module>Common</module>
         <module>Api</module>
-        <module>OutApi</module>
+<!--        <module>OutApi</module>-->
         <module>Task</module>
         <module>Web</module>
     </modules>

@@ -130,9 +130,9 @@ public class LaunchController extends BaseController {
 		String currency;
 		switch (api) {
 
-			case "918kiss": case "918kisssgd":
+			case "apollo": case "apollosgd":
 				gameInfo = BaseService.getGameInfo(gameId);
-				url = Kiss918Api.getInstance(gameInfo.getCurrency()).getLoginUrl(memberId, gameId, lang);
+				url = ApolloApi.getInstance(gameInfo.getCurrency()).getLoginUrl(memberId, gameId, lang);
 				break;
 
 			default:

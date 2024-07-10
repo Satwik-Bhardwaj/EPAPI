@@ -39,9 +39,9 @@ public class GeneralApi {
 		try {
 			switch (api) {
 
-				case "918kiss": case "918kisssgd":
+				case "apollo": case "apollosgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					balance = Kiss918Api.getInstance(gameInfo.getCurrency()).getBalance(userName);
+					balance = ApolloApi.getInstance(gameInfo.getCurrency()).getBalance(userName);
 					break;
 
 				default:
@@ -139,9 +139,9 @@ public class GeneralApi {
 			Ret result = null;
 			switch (api) {
 
-				case "918kiss": case "918kisssgd":
+				case "apollo": case "apollosgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					result = Kiss918Api.getInstance(gameInfo.getCurrency())
+					result = ApolloApi.getInstance(gameInfo.getCurrency())
 							.withdraw2Balance(txnId, memberId, userName, platform, gameName);
 					break;
 
@@ -181,9 +181,9 @@ public class GeneralApi {
 		//有进入游戏记录，从最后一次游戏记录提现，修改平台余额，再充
 		try {
 			switch (api) {
-				case "918kiss": case "918kisssgd":
+				case "apollo": case "apollosgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					Kiss918Api.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
+					ApolloApi.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
 					break;
 				default:
 					break;
@@ -289,9 +289,9 @@ public class GeneralApi {
 			String platform = lastRecord.getPlatform();
 			switch (api) {
 
-				case "918kiss": case "918kisssgd":
+				case "apollo": case "apollosgd":
 					gameInfo = BaseService.getGameInfo(api, platform);
-					Kiss918Api.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
+					ApolloApi.getInstance(gameInfo.getCurrency()).deposit2Game(txnId, memberId, userName, platform);
 					break;
 				default:
 					break;
