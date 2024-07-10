@@ -107,7 +107,15 @@ public class ApolloController extends BaseController {
 
     }
 
-    //withdraw or deposit
+    /**
+     * withdraw or deposit
+     *
+     * @param currency currency type
+     * @param amount amount to add or withdraw
+     * @param playerId player's id
+     * @param remark remark
+     * @param allCashOutFlag flag to withdraw all money (when it is 1) [0/1]
+     */
     public void withdrawOrDeposit(String currency, double amount, String playerId, String remark,
                                   String allCashOutFlag) {
         if (currency == null) {

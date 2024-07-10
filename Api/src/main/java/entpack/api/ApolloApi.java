@@ -29,7 +29,6 @@ public class ApolloApi extends ApolloBaseApi {
                 if (currency.equals("HKD")) {
                     apiMap.put("HK", new ApolloApi(currency, iv, secretKey, agentId, dc));
                 }
-                // TODO : please check iv is placed correctly
                 agentIdMap.put(agentId, iv);
             }
         }
