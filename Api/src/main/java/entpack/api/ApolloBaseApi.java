@@ -13,7 +13,7 @@ import entpack.bean.BalanceRollBack;
 import entpack.bean.GameInfo;
 import entpack.bean.MemberInfo;
 import entpack.service.BaseService;
-import entpack.service.Kiss918ApiService;
+import entpack.service.ApolloApiService;
 import entpack.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -322,7 +322,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
      */
     public JSONObject getUserInfo(String userName) {
 
-        Record user = Kiss918ApiService.getUser(userName);
+        Record user = ApolloApiService.getUser(userName);
         String account = user.get("account");
 
         String time = String.valueOf(System.currentTimeMillis());
@@ -536,7 +536,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
                             String record_key = "api:Task:kiss918:signRecord:" + BaseService.signRecord(recordList);
                             if (RedisLock.lock(record_key, 300)) {
-                                BaseService.insertOrUpdate("api_918kiss_ticket", recordList);
+                                BaseService.insertOrUpdate("api_apollo_ticket", recordList);
                             }
 
                             try {
@@ -638,7 +638,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
      */
     public JSONObject disable(String userName) {
 
-        Record user = Kiss918ApiService.getUser(userName);
+        Record user = ApolloApiService.getUser(userName);
         String account = user.get("account");
 
         String time = String.valueOf(System.currentTimeMillis());
@@ -686,13 +686,13 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 //        if(1==1)
 //        return "/launchApp?api=918kiss";
 
-        MemberInfo memberInfo = Kiss918ApiService.getMemberInfo(memberId);
+        MemberInfo memberInfo = ApolloApiService.getMemberInfo(memberId);
         if (memberInfo == null) {
             logger.error("memberInfo == null memberId:{}", memberId);
             return "/launchApp";
         }
 
-        if (!Kiss918ApiService.exists(memberId)) {
+        if (!ApolloApiService.exists(memberId)) {
 
 //            String account = memberInfo.getUserName();
             // TODO : see this
@@ -716,16 +716,16 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             model.set("userName", name);
             model.set("pwd", pwd);
             model.set("createDate", new Date());
-            Kiss918ApiService.createUser(model);
+            ApolloApiService.createUser(model);
         } else {
             //检查密码是否已修改，如果修改需要同步到app
             String curPwd = memberInfo.getPwdText();
-            Record bean = Kiss918ApiService.getUser(memberInfo.getUserName());
+            Record bean = ApolloApiService.getUser(memberInfo.getUserName());
             String regPwd = bean.getStr("pwd");
             if (!regPwd.equals(curPwd)) {
                 String account = bean.getStr("account");
                 if (editUser(account, regPwd, curPwd)) {
-                    Kiss918ApiService.updateUserPwdByMemberId(memberId, curPwd);
+                    ApolloApiService.updateUserPwdByMemberId(memberId, curPwd);
                 }
             }
         }
@@ -747,11 +747,11 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         boolean depositResult = deposit2Game(txnId, memberId, userName, gameInfo.getPlatform(), gameInfo.getName());
 
         //记录进行游戏
-        Kiss918ApiService.enterGameLog(ret.getStr("api"), txnId, memberId, userBalance, amount, depositResult, userName, getApi(),
+        ApolloApiService.enterGameLog(ret.getStr("api"), txnId, memberId, userBalance, amount, depositResult, userName, getApi(),
                 gameInfo.getGameType(), gameInfo.getPlatform(), gameInfo.getName(), gameInfo.getMultiple());
 
         //跳转到过渡页
-        return "/launchApp?api=918kiss";
+        return "/launchApp?api=apollo";
     }
     /*多钱包接口实现*/
 
@@ -785,7 +785,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
      */
     public int setScore(String userName, String txCode, int type, double amount) {
 
-        Record user = Kiss918ApiService.getUser(userName);
+        Record user = ApolloApiService.getUser(userName);
         String account = user.get("account");
         String memberId = user.get("memberId");
 
@@ -860,7 +860,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 }
             }
 
-            Db.save("api_918kiss_transfer_log", record);
+            Db.save("api_apollo_transfer_log", record);
         }
     }
 
@@ -966,7 +966,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public boolean deposit2Game(String txnId, String memberId, String userName, String platform, String gameName) {
         String api = getApi();
         //将平台余额充入游戏
-        Map<String, Object> data = Kiss918ApiService.getBalance(userName, getApi());
+        Map<String, Object> data = ApolloApiService.getBalance(userName, getApi());
         double userBalance = (double) data.get("balance");
         logger.info("Kiss918.deposit2Game userBalance:{}", userBalance);
         //取遊戲游戏余额
@@ -979,7 +979,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 String transferId = txnId + "-" + StringUtil.shortUUID();
                 logger.info("Kiss918.deposit2Game transferId:{}", transferId);
                 //更新平台余额 减掉所有余额
-                BalanceResult balanceResult = Kiss918ApiService.updateGetCreditsBalanceLockForGS(transferId,
+                BalanceResult balanceResult = ApolloApiService.updateGetCreditsBalanceLockForGS(transferId,
                         "deposit", -1 * amount, memberId, api, transferId,
                         String.format("Kiss918.deposit %s %s", platform, gameName));
 

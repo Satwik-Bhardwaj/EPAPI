@@ -9,7 +9,7 @@ import entpack.bean.MemberGameConfig;
 import entpack.bean.RedisTicket;
 import entpack.service.BaseService;
 import entpack.service.CacheService;
-import entpack.service.Kiss918ApiService;
+import entpack.service.ApolloApiService;
 import entpack.utils.DateUtil;
 import entpack.utils.RedisLock;
 import entpack.utils.TaskUtil;
@@ -51,7 +51,7 @@ public class Kiss918Task implements StatefulJob {
 
     public void doItem() {
 
-        List<Record> recordList = Kiss918ApiService.queryTicket();
+        List<Record> recordList = ApolloApiService.queryTicket();
 
         for (Record record : recordList) {
             String api = record.getStr("api");
@@ -69,7 +69,7 @@ public class Kiss918Task implements StatefulJob {
 
             String account = record.getStr("account");
 
-            Record user = Kiss918ApiService.getUserByAccount(account);
+            Record user = ApolloApiService.getUserByAccount(account);
             String memberId = user.getStr("memberId");
 
             String key = "lock:kiss918::push:" + betId;
@@ -88,7 +88,7 @@ public class Kiss918Task implements StatefulJob {
 
                     if (ticket == null) {
                         //更新为失败
-                        Kiss918ApiService.updateTicket(betId, -2, "not found gameId");
+                        ApolloApiService.updateTicket(betId, -2, "not found gameId");
                         continue;
                     }
 
@@ -105,14 +105,14 @@ public class Kiss918Task implements StatefulJob {
                     BaseService.pushTicket(ticket);
                 } catch (Exception ex) {
                     //更新为失败
-                    Kiss918ApiService.updateTicket(betId, -3, ex.getMessage());
+                    ApolloApiService.updateTicket(betId, -3, ex.getMessage());
                     ex.printStackTrace();
                     logger.error("betId:" + betId + ".buildTicket.error:", ex);
                     continue;
                 }
 
                 //update success
-                Kiss918ApiService.updateTicket(betId);
+                ApolloApiService.updateTicket(betId);
             } else {
                 logger.info("key.locked key:{}", key);
             }
