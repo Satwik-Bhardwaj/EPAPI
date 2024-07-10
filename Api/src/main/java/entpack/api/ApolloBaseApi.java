@@ -453,9 +453,9 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
             String totalwin = result.getString("totalwin");
 
-            String key = "api:Task:kiss918:totalwin";
-            String item_key = "api:Task:kiss918:totalwin:";
-            String accountGameLog_key = "api:Task:kiss918:accountGameLog:";
+            String key = "api:Task:apollo:totalwin";
+            String item_key = "api:Task:apollo:totalwin:";
+            String accountGameLog_key = "api:Task:apollo:accountGameLog:";
 
             int pageSize = 1000;
             Cache redis = Redis.use();
@@ -534,7 +534,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                                 }
                             }
 
-                            String record_key = "api:Task:kiss918:signRecord:" + BaseService.signRecord(recordList);
+                            String record_key = "api:Task:apollo:signRecord:" + BaseService.signRecord(recordList);
                             if (RedisLock.lock(record_key, 300)) {
                                 BaseService.insertOrUpdate("api_apollo_ticket", recordList);
                             }
@@ -680,7 +680,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     }
 
     public String getLoginUrl(String memberId, String gameId, String lang) {
-        logger.info("Kiss918.getLoginUrl memberId:{} gameId:{} lang:{}", memberId, gameId, lang);
+        logger.info("apollo.getLoginUrl memberId:{} gameId:{} lang:{}", memberId, gameId, lang);
 
         //测试用
 //        if(1==1)
@@ -701,7 +701,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             String account = randomUserName();
             String name = memberInfo.getUserName();
             boolean result = createPlayer(uid, name);
-            logger.info("Kiss918.createMember result:{}", result);
+            logger.info("Apollo.createMember result:{}", result);
 
             if (!result) {
                 return "/launchApp";
@@ -822,15 +822,15 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 if (status != null && status.equals("0")) {
                     return 1;
                 }
-                logger.error("Kiss918.{}.error userName:{} amount:{} result:{}", opt, userName, amount, result);
+                logger.error("Apollo.{}.error userName:{} amount:{} result:{}", opt, userName, amount, result);
                 return 0;
             } else {
-                logger.error("Kiss918.{}}.error userName:{} amount:{} result:null", opt, userName, amount);
+                logger.error("Apollo.{}}.error userName:{} amount:{} result:null", opt, userName, amount);
             }
             return 0;
         } catch (Exception ex) {
             ex.printStackTrace();
-            logger.error("Kiss918." + opt + ".error", ex);
+            logger.error("Apollo." + opt + ".error", ex);
             return -1;
         } finally {
             Record record = new Record()
@@ -913,7 +913,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 if (result == 1) {
                     //更新平台余额
                     BalanceResult balanceResult = BaseService.updateGetCreditsBalance(amount, memberId, api, transferId, transferId,
-                            String.format("Kiss918.makeTransfer withdraw %s %s", platform, gameName));
+                            String.format("Apollo.makeTransfer withdraw %s %s", platform, gameName));
                     if (balanceResult.getResult()) {
                         BaseService.enterGamePlatformWithdraw(transferId, amount, memberId, api, platform, gameName);
                         return Ret.ok().set("amount", amount).set("balance", balanceResult.getBalance());
@@ -924,7 +924,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                     if (gameBalance - amount == after_gameBalance) {
                         //更新平台余额
                         BalanceResult balanceResult = BaseService.updateGetCreditsBalance(amount, memberId, api, transferId, transferId,
-                                String.format("Kiss918.makeTransfer withdraw %s %s redo before:%s after:%s amount:%s",
+                                String.format("Apollo.makeTransfer withdraw %s %s redo before:%s after:%s amount:%s",
                                         platform, gameName, gameBalance, after_gameBalance, amount));
                         if (balanceResult.getResult()) {
                             BaseService.enterGamePlatformWithdraw(transferId, amount, memberId, api, platform, gameName);
@@ -968,7 +968,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         //将平台余额充入游戏
         Map<String, Object> data = ApolloApiService.getBalance(userName, getApi());
         double userBalance = (double) data.get("balance");
-        logger.info("Kiss918.deposit2Game userBalance:{}", userBalance);
+        logger.info("Apollo.deposit2Game userBalance:{}", userBalance);
         //取遊戲游戏余额
         double gameBalance = getGameBalance(userName);
 
@@ -977,15 +977,15 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             long amount = (long) (userBalance);
             if (amount > 0) {
                 String transferId = txnId + "-" + StringUtil.shortUUID();
-                logger.info("Kiss918.deposit2Game transferId:{}", transferId);
+                logger.info("Apollo.deposit2Game transferId:{}", transferId);
                 //更新平台余额 减掉所有余额
                 BalanceResult balanceResult = ApolloApiService.updateGetCreditsBalanceLockForGS(transferId,
                         "deposit", -1 * amount, memberId, api, transferId,
-                        String.format("Kiss918.deposit %s %s", platform, gameName));
+                        String.format("Apollo.deposit %s %s", platform, gameName));
 
                 logger.info("balanceResult.getResult() :{}", balanceResult.getResult());
                 if (balanceResult.getResult()) {
-                    logger.info("Kiss918.deposit2Game balanceResult:{}", JSONObject.toJSONString(balanceResult));
+                    logger.info("Apollo.deposit2Game balanceResult:{}", JSONObject.toJSONString(balanceResult));
 
                     //调接口存入
                     int result = deposit(userName, txnId, amount);
