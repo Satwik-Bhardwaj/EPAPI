@@ -6,7 +6,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import entpack.api.ApolloApi;
 import entpack.bean.MemberInfo;
-import entpack.service.Kiss918ApiService;
+import entpack.service.ApolloApiService;
 import entpack.utils.DateUtil;
 import entpack.utils.StringUtil;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class ApolloController extends BaseController {
 	 */
     public String getAccount(String userName) {
 
-        Record record = Kiss918ApiService.getUser(userName);
+        Record record = ApolloApiService.getUser(userName);
         if (record == null) {
             return null;
         }
@@ -107,6 +107,17 @@ public class ApolloController extends BaseController {
 
     }
 
+    //withdraw or deposit
+    public void withdrawOrDeposit(String currency, double amount, String playerId, String remark,
+                                  String allCashOutFlag) {
+        if (currency == null) {
+            currency = "MYR";
+        }
+        if (allCashOutFlag == null) {
+            allCashOutFlag = "0";
+        }
+        renderJson(ApolloApi.getInstance(currency).withdrawOrDeposit(amount, playerId, remark, allCashOutFlag));
+    }
     /**
      * Search game details
      *
@@ -189,7 +200,7 @@ public class ApolloController extends BaseController {
         }
 
         String txnId = StringUtil.shortUUID();
-        MemberInfo memberInfo = Kiss918ApiService.getMemberInfo(memberId);
+        MemberInfo memberInfo = ApolloApiService.getMemberInfo(memberId);
         Ret result = ApolloApi.getInstance(currency).withdraw2Balance(txnId, memberId, memberInfo.getUserName());
         renderText("result:" + result.toJson());
     }
