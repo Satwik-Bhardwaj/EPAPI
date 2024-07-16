@@ -130,15 +130,18 @@ public abstract class ApolloBaseApi implements MultipleInterface {
      * @param creditAllocated player's name
      * @return
      */
-    public boolean createPlayer(String uid, String creditAllocated) {
+    public boolean createPlayer(String memberId, String username, String uid, String creditAllocated) {
 
         String time = String.valueOf(System.currentTimeMillis());
         JSONObject params = new JSONObject();
         params.put("action", "2");
         params.put("ts", time);
         params.put("parent", getApiAgent());
-        params.put("uid", uid);
-        params.put("name", uid);
+        if(uid==null || uid.isEmpty())
+            params.put("uid", 0);
+        else
+            params.put("uid", uid);
+        params.put("name", username);
         params.put("credit_allocated", creditAllocated == null || creditAllocated.isEmpty() ? "0" : creditAllocated);
 
 
@@ -166,11 +169,12 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                     //create entry in database
                     Record record = new Record()
                             .set("api", getApi())
-                            .set("account", obj.get("uid"))
-                            .set("memberId", obj.get("uid"))
+                            .set("account", "")
+                            .set("uid", obj.get("uid"))
+                            .set("memberId", memberId)
                             .set("createDate", new Date())
                             .set("currency",getCurrency())
-                            .set("username",obj.get("uid"))
+                            .set("username", username)
                             .set("agentId",getApiAgent());
 
                         Db.use("member").save("apollo_create",record);
@@ -214,7 +218,14 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         return postData(url, paramList);
     }
   
-   public JSONObject searchPlayer(String playerId) {
+   public JSONObject searchPlayer(String memberId) {
+        // get player id from the member id
+       String sql = "select uid " +
+               "from apollo_create " +
+               "where memberId=?";
+       Record record = Db.use("member").findFirst(sql, memberId);
+       String playerId = record.getStr("uid");
+       //
        String time = String.valueOf(System.currentTimeMillis());
        JSONObject params = new JSONObject();
        params.put("action", "3");
@@ -237,20 +248,28 @@ public abstract class ApolloBaseApi implements MultipleInterface {
        return postData(url, paramList);
    }
 
-    public JSONObject withdrawOrDeposit(double amount, String playerId, String remark,
+    public JSONObject withdrawOrDeposit(double amount, String memberId, String remark,
                                         String allCashOutFlag) {
+        String sql = "select uid " +
+                "from apollo_create " +
+                "where memberId=?";
+        Record memberRecord = Db.use("member").findFirst(sql, memberId);
+        String uid = memberRecord.getStr("uid");
+
         String time = String.valueOf(System.currentTimeMillis());
         if (amount > 0) {
             remark = remark + "Deposit";
         } else {
             remark = remark + "Withdrawal";
         }
+        String serialNo = StringUtil.shortUUID();
+
         JSONObject params = new JSONObject();
         params.put("action", "5");
         params.put("ts", time);
         params.put("parent", getApiAgent());
-        params.put("uid", playerId);
-        params.put("serialNo", StringUtil.shortUUID());
+        params.put("uid", uid);
+        params.put("serialNo", serialNo);
         params.put("allCashOutFlag", allCashOutFlag);
         params.put("amount", amount);
         params.put("remark", remark);
@@ -267,7 +286,40 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         paramList.put("x", data);
 
         String url = HOST + "/Tr_ChangeV.aspx";
-        return postData(url, paramList);
+
+        Record record = new Record()
+                .set("api", getApi())
+                .set("account", "")
+                .set("type", amount > 0 ? "deposit" : "withdraw")
+                .set("amount", (int) amount)
+                .set("txCode", serialNo)
+                .set("createDate", new Date());
+
+        JSONObject obj = null;
+
+        try {
+            obj = postData(url, paramList);
+
+            if (obj != null) {
+                String resp_status = obj.getString("status");
+                if (resp_status != null && resp_status.equals("0000")) {
+                    record
+                        .set("memberId", memberId)
+                        .set("statusCode", "0");
+                } else {
+                    record
+                        .set("errCode", "1")
+                        .set("errMsg", obj.getString("err_text"));
+                    logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
+                }
+            }
+
+            Db.use("member").save("apollo_transfer_log", record);
+        } catch (Exception e) {
+            logger.error("addUser.error", e);
+            e.printStackTrace();
+        }
+        return obj;
     }
 
 
@@ -729,7 +781,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             String pwd = memberInfo.getPwdText();
             String account = randomUserName();
             String name = memberInfo.getUserName();
-            boolean result = createPlayer(uid, name);
+            boolean result = createPlayer(memberId, name, uid, "0");
             logger.info("Apollo.createMember result:{}", result);
 
             if (!result) {
