@@ -70,11 +70,11 @@ public class ApolloController extends BaseController {
      * @param uid user id
      * @param creditAllocated initial balance
      */
-    public void createPlayer(String currency, String uid, String creditAllocated) {
+    public void createPlayer(String currency, String memberId, String username, String uid, String creditAllocated) {
         if (currency == null) {
             currency = "MYR";
         }
-        renderJson(ApolloApi.getInstance(currency).createPlayer(uid, creditAllocated));
+        renderJson(ApolloApi.getInstance(currency).createPlayer(memberId, username, uid, creditAllocated));
     }
 
     /**
@@ -97,13 +97,13 @@ public class ApolloController extends BaseController {
      * Search Player
      *
      * @param currency currency type
-     * @param playerId player id
+     * @param memberId member id
      */
-    public void searchPlayer(String currency, String playerId) {
+    public void searchPlayer(String currency, String memberId) {
         if (currency == null) {
             currency = "MYR";
         }
-        renderJson(ApolloApi.getInstance(currency).searchPlayer(playerId));
+        renderJson(ApolloApi.getInstance(currency).searchPlayer(memberId));
 
     }
 
@@ -112,11 +112,11 @@ public class ApolloController extends BaseController {
      *
      * @param currency currency type
      * @param amount amount to add or withdraw
-     * @param playerId player's id
+     * @param memberId player's id
      * @param remark remark
      * @param allCashOutFlag flag to withdraw all money (when it is 1) [0/1]
      */
-    public void withdrawOrDeposit(String currency, double amount, String playerId, String remark,
+    public void withdrawOrDeposit(String currency, double amount, String memberId, String remark,
                                   String allCashOutFlag) {
         if (currency == null) {
             currency = "MYR";
@@ -124,7 +124,7 @@ public class ApolloController extends BaseController {
         if (allCashOutFlag == null) {
             allCashOutFlag = "0";
         }
-        renderJson(ApolloApi.getInstance(currency).withdrawOrDeposit(amount, playerId, remark, allCashOutFlag));
+        renderJson(ApolloApi.getInstance(currency).withdrawOrDeposit(amount, memberId, remark, allCashOutFlag));
     }
     /**
      * Search game details
