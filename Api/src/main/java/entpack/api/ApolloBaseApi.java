@@ -193,14 +193,18 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     }
 
-    public JSONObject obtainToken(String uid,String lang,String gType,String mute,String currency){
+    public JSONObject obtainToken(String memberId,String lang,String gType,String mute,String currency){
+        String sql = "select uid " +
+                "from apollo_create " +
+                "where memberId=?";
+        Record record = Db.use("member").findFirst(sql, memberId);
         String time = String.valueOf(System.currentTimeMillis());
+        String playerUid = record.getStr("uid");
         JSONObject params = new JSONObject();
         params.put("action", "1");
         params.put("ts", time);
         params.put("parent", getApiAgent());
-        params.put("uid", uid);
-        params.put("name", uid);
+        params.put("uid", playerUid);
         params.put("gType",gType);
         params.put("windowMode","2");
         params.put("backBtn","false");
@@ -209,6 +213,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         try {
             data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
         } catch (Exception e) {
+            logger.error("obtainToken.error", e);
             throw new RuntimeException(e);
         }
         Map<String, String> paramList = new HashMap<>();
@@ -237,6 +242,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
        try {
            data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
        } catch (Exception e) {
+           logger.error("searchPlayer.error", e);
            throw new RuntimeException(e);
        }
 
@@ -310,13 +316,13 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                     record
                         .set("errCode", "1")
                         .set("errMsg", obj.getString("err_text"));
-                    logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
+                    logger.error("withdrawOrDeposit postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
                 }
             }
 
             Db.use("member").save("apollo_transfer_log", record);
         } catch (Exception e) {
-            logger.error("addUser.error", e);
+            logger.error("withdrawOrDeposit.error", e);
             e.printStackTrace();
         }
         return obj;
