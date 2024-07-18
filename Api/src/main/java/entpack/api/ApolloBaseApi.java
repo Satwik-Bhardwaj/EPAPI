@@ -356,8 +356,42 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         paramList.put("x", data);
 
         String url = HOST + "/Tr_QueryGameJsonResult.aspx";
-        return postData(url, paramList);
 
+        JSONObject obj = null;
+        try {
+            obj = postData(url, paramList);
+
+            if (obj != null) {
+                String resp_status = obj.getString("status");
+                if(resp_status != null && resp_status.equals("0000")) {
+                    JSONArray obj_data = obj.getJSONArray("data");
+                    if(obj_data != null) {
+                        for(int i=0; i<obj_data.size(); i++) {
+                            JSONObject dataItem = obj_data.getJSONObject(i);
+                            Record record = new Record()
+                                    .set("CreateTime", dataItem.get("time"))
+                                    .set("GameName", dataItem.get("gname"))
+                                    .set("GameType", dataItem.get("gtype"))
+                                    .set("uid", dataItem.get("uid"))
+                                    .set("GameId", dataItem.get("seqNo"))
+                                    .set("bet", dataItem.get("bet"))
+                                    .set("Win", dataItem.get("win"))
+                                    .set("BeginBlance", dataItem.get("startV"))
+                                    .set("EndBlance", dataItem.get("endV"))
+                                    .set("des", dataItem.get("des"));
+
+                            Db.use("member").save("apollo_ticket",record);
+                        }
+                    }
+                } else {
+                    logger.error("searchGame postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
+                }
+            }
+        } catch (Exception e) {
+            logger.error("addUser.error", e);
+            e.printStackTrace();
+        }
+        return obj;
     }
 
     /**
