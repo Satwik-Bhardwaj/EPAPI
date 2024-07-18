@@ -150,6 +150,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         try {
             data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
         } catch (Exception e) {
+            logger.error("createPlayer.error",e);
             throw new RuntimeException(e);
         }
 
@@ -181,12 +182,12 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
                     return true;
                 } else {
-                    logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
+                    logger.error("createPlayer postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
                 }
                 return false;   
             }
         } catch (Exception e) {
-            logger.error("addUser.error", e);
+            logger.error("createPlayer.error", e);
             e.printStackTrace();
         }
         return false;
@@ -284,6 +285,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         try {
             data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
         } catch (Exception e) {
+            logger.error("withdrawOrDeposit.error",e);
             throw new RuntimeException(e);
         }
 
@@ -323,7 +325,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
             Db.use("member").save("apollo_transfer_log", record);
         } catch (Exception e) {
             logger.error("withdrawOrDeposit.error", e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return obj;
     }
@@ -358,6 +360,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         try {
             data = AESUtil.encryptForJDB(params.toString(), secretKey, iv);
         } catch (Exception e) {
+            logger.error("searchGame.error",e);
             throw new RuntimeException(e);
         }
 
@@ -399,8 +402,8 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 }
             }
         } catch (Exception e) {
-            logger.error("addUser.error", e);
-            e.printStackTrace();
+            logger.error("searchGame.error", e);
+            throw new RuntimeException(e);
         }
         return obj;
     }
