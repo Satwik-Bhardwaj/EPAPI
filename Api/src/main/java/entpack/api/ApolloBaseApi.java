@@ -329,8 +329,13 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     }
 
 
-    public JSONObject searchGame(String uid, String startTime, String endTime, String lang, String gType) {
+    public JSONObject searchGame(String memberId, String startTime, String endTime, String lang, String gType) {
 
+        String sql = "select uid " +
+                "from apollo_create " +
+                "where memberId=?";
+        Record memberRecord = Db.use("member").findFirst(sql, memberId);
+        String uid = memberRecord.getStr("uid");
         String time = String.valueOf(System.currentTimeMillis());
         JSONObject params = new JSONObject();
         params.put("action", "12");
