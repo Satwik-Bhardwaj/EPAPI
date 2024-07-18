@@ -334,14 +334,20 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         String sql = "select uid " +
                 "from apollo_create " +
                 "where memberId=?";
-        Record memberRecord = Db.use("member").findFirst(sql, memberId);
-        String uid = memberRecord.getStr("uid");
         String time = String.valueOf(System.currentTimeMillis());
         JSONObject params = new JSONObject();
         params.put("action", "12");
         params.put("ts", time);
         params.put("parent", getApiAgent());
-        params.put("uid", uid);
+
+        if(memberId!=null) {
+            Record memberRecord = Db.use("member").findFirst(sql, memberId);
+            String uid = memberRecord.getStr("uid");
+            params.put("uid", uid);
+        }
+        else{
+            params.put("uid", "0");
+        }
         params.put("starttime", startTime);
         params.put("endtime", endTime);
         params.put("lang", lang);
