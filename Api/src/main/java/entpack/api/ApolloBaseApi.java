@@ -138,7 +138,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                             .set("username", username)
                             .set("agentId",getApiAgent());
 
-                        Db.use("member").save("apollo_create",record);
+                        Db.use("member").save("api_apollo_create",record);
 
                     return true;
                 } else {
@@ -156,7 +156,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
 
     public JSONObject obtainToken(String memberId,String lang,String gType,String mute,String currency){
         String sql = "select uid " +
-                "from apollo_create " +
+                "from api_apollo_create " +
                 "where memberId=?";
         Record record = Db.use("member").findFirst(sql, memberId);
         String time = String.valueOf(System.currentTimeMillis());
@@ -187,7 +187,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
    public JSONObject searchPlayer(String memberId) {
         // get player id from the member id
        String sql = "select uid " +
-               "from apollo_create " +
+               "from api_apollo_create " +
                "where memberId=?";
        Record record = Db.use("member").findFirst(sql, memberId);
        String playerId = record.getStr("uid");
@@ -218,7 +218,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public JSONObject withdrawOrDeposit(double amount, String memberId, String remark,
                                         String allCashOutFlag) {
         String sql = "select uid " +
-                "from apollo_create " +
+                "from api_apollo_create " +
                 "where memberId=?";
         Record memberRecord = Db.use("member").findFirst(sql, memberId);
         String uid = memberRecord.getStr("uid");
@@ -282,7 +282,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                 }
             }
 
-            Db.use("member").save("apollo_transfer_log", record);
+            Db.use("member").save("api_apollo_transfer_log", record);
         } catch (Exception e) {
             logger.error("withdrawOrDeposit.error", e);
             throw new RuntimeException(e);
@@ -294,7 +294,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public JSONObject searchGame(String memberId, String startTime, String endTime, String lang, String gType) {
 
         String sql = "select uid " +
-                "from apollo_create " +
+                "from api_apollo_create " +
                 "where memberId=?";
         String time = String.valueOf(System.currentTimeMillis());
         JSONObject params = new JSONObject();
@@ -354,7 +354,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
                                     .set("EndBlance", dataItem.get("endV"))
                                     .set("des", dataItem.get("des"));
 
-                            Db.use("member").save("apollo_ticket",record);
+                            Db.use("member").save("api_apollo_ticket",record);
                         }
                     }
                 } else {
