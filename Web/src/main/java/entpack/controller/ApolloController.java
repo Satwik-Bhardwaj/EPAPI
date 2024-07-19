@@ -33,32 +33,6 @@ public class ApolloController extends BaseController {
         return record.get("account");
     }
 
-    public void loginUrl(String currency, String memberId, String gameId) {
-        if (currency == null) {
-            currency = "MYR";
-        }
-
-        ApolloApi api = ApolloApi.getInstance(currency);
-
-        String result = api.getLoginUrl(memberId, gameId, "en");
-        System.out.println(result);
-        renderJson(result);
-    }
-
-    /**
-     * 用户注册接口
-     *
-     * @param currency
-     * @param userName
-     */
-    public void randomUserName(String currency, String userName) {
-        if (currency == null) {
-            currency = "MYR";
-        }
-
-        renderJson(ApolloApi.getInstance(currency).randomUserName());
-    }
-
     /**
      * 添加用户接口
      */
