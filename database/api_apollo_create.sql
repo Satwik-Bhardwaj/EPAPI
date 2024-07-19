@@ -1,11 +1,11 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : pro_entpack
+ Source Server         : pro_entpackApi
  Source Server Type    : MySQL
  Source Server Version : 80035 (8.0.35)
  Source Host           : localhost:3310
- Source Schema         : entpack
+ Source Schema         : entpackApi
 
  Target Server Type    : MySQL
  Target Server Version : 80035 (8.0.35)
@@ -22,8 +22,8 @@ USE entpack;
 -- ----------------------------
 -- Table structure for apollo_create
 -- ----------------------------
-DROP TABLE IF EXISTS `entpack`.`apollo_create`;
-CREATE TABLE `entpack`.`apollo_create`  (
+DROP TABLE IF EXISTS `entpackApi`.`api_apollo_create`;
+CREATE TABLE `entpack`.`api_apollo_create`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `uid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `api` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -40,8 +40,8 @@ CREATE TABLE `entpack`.`apollo_create`  (
 -- ----------------------------
 -- Table structure for apollo_ticket
 -- ----------------------------
-DROP TABLE IF EXISTS `entpack`.`apollo_ticket`;
-CREATE TABLE `entpack`.	`apollo_ticket`  (
+DROP TABLE IF EXISTS `entpackApi`.`api_apollo_ticket`;
+CREATE TABLE `entpack`.	`api_apollo_ticket`  (
   `uuid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '注单号 (唯一值)',
   `uid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `BeginBlance` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
@@ -74,8 +74,8 @@ CREATE TABLE `entpack`.	`apollo_ticket`  (
 -- ----------------------------
 -- Table structure for apollo_transfer_log
 -- ----------------------------
-DROP TABLE IF EXISTS `entpack`.`apollo_transfer_log`;
-CREATE TABLE `entpack`.`apollo_transfer_log`  (
+DROP TABLE IF EXISTS `entpackApi`.`api_apollo_transfer_log`;
+CREATE TABLE `entpack`.`api_apollo_transfer_log`  (
   `tranId` int NOT NULL AUTO_INCREMENT COMMENT '唯一键',
   `api` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '会员账号',

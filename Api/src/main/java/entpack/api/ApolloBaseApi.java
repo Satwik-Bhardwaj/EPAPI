@@ -84,46 +84,6 @@ public abstract class ApolloBaseApi implements MultipleInterface {
         }
         return null;
     }
-
-
-    /**
-     * 用户注册接口
-     *
-     * @return
-     */
-    public String randomUserName() {
-
-        String time = String.valueOf(System.currentTimeMillis());
-        Map<String, String> params = new HashMap<>();
-        params.put("action", "RandomUserName");
-
-        params.put("userName", getApiAgent());
-        params.put("UserAreaId", "1");
-        params.put("time", time);
-        params.put("authcode", iv);
-        params.put("sign", sign(getApiAgent(), time));
-
-        String url = HOST + "/ashx/account/account.ashx";
-        try {
-            JSONObject obj = postData(url, params);
-
-            if (obj != null) {
-                String code = obj.getString("code");
-                if (code != null && (code.equals("0") || code.equals("-1"))) {
-                    // 记录创建的账号
-                    return obj.getString("account");
-                } else {
-                    logger.error("addUser postUrl:{} params:{} result:{}", url, JSONObject.toJSONString(params), obj.toJSONString());
-                }
-                return null;
-            }
-        } catch (Exception e) {
-            logger.error("addUser.error", e);
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     /**
      * 添加用户接口
      * @param uid user id
@@ -815,79 +775,7 @@ public abstract class ApolloBaseApi implements MultipleInterface {
     public double getBalance(String userName) {
         return getGameBalance(userName);
     }
-    public String getLoginUrl(String memberId, String gameId, String lang) {
-        logger.info("apollo.getLoginUrl memberId:{} gameId:{} lang:{}", memberId, gameId, lang);
 
-        //测试用
-//        if(1==1)
-//        return "/launchApp?api=918kiss";
-
-        MemberInfo memberInfo = ApolloApiService.getMemberInfo(memberId);
-        if (memberInfo == null) {
-            logger.error("memberInfo == null memberId:{}", memberId);
-            return "/launchApp";
-        }
-
-        if (!ApolloApiService.exists(memberId)) {
-
-//            String account = memberInfo.getUserName();
-            String uid = " ";
-            String pwd = memberInfo.getPwdText();
-            String account = randomUserName();
-            String name = memberInfo.getUserName();
-            boolean result = createPlayer(memberId, name, uid, "0");
-            logger.info("Apollo.createMember result:{}", result);
-
-            if (!result) {
-                return "/launchApp";
-            }
-            // 记录创建的账号
-            Record model = new Record();
-            model.set("api", getApi());
-            model.set("agentId", getApiAgent());
-            model.set("memberId", memberId);
-            model.set("currency", getCurrency());
-            model.set("account", account);
-            model.set("userName", name);
-            model.set("pwd", pwd);
-            model.set("createDate", new Date());
-            ApolloApiService.createUser(model);
-        } else {
-            //检查密码是否已修改，如果修改需要同步到app
-            String curPwd = memberInfo.getPwdText();
-            Record bean = ApolloApiService.getUser(memberInfo.getUserName());
-            String regPwd = bean.getStr("pwd");
-            if (!regPwd.equals(curPwd)) {
-                String account = bean.getStr("account");
-                if (editUser(account, regPwd, curPwd)) {
-                    ApolloApiService.updateUserPwdByMemberId(memberId, curPwd);
-                }
-            }
-        }
-
-        String userName = memberInfo.getUserName();
-        GameInfo gameInfo = BaseService.getGameInfo(gameId);
-
-        String txnId = StringUtil.shortUUID();
-        //提出
-        Ret ret = GeneralApi.withdraw2Balance(txnId, memberId);
-        double userBalance = ret.getDouble("balance");
-        Double amount = ret.getDouble("amount");
-        if (amount == null) {
-            //-1 提现失败
-            amount = -1d;
-        }
-
-        //将平台余额充入游戏
-        boolean depositResult = deposit2Game(txnId, memberId, userName, gameInfo.getPlatform(), gameInfo.getName());
-
-        //记录进行游戏
-        ApolloApiService.enterGameLog(ret.getStr("api"), txnId, memberId, userBalance, amount, depositResult, userName, getApi(),
-                gameInfo.getGameType(), gameInfo.getPlatform(), gameInfo.getName(), gameInfo.getMultiple());
-
-        //跳转到过渡页
-        return "/launchApp?api=apollo";
-    }
 
     /*多钱包接口实现*/
 
